@@ -1,5 +1,5 @@
 ---
-title: "About Anton"
+title: "About Me"
 description: "About Anton Siomchen, a medicinal chemist and software engineer working at the intersection of chemistry, data, and software development."
 ---
 

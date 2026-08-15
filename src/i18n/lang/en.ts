@@ -5,7 +5,7 @@ export default {
     home: "Home",
     posts: "Blog",
     tags: "Topics",
-    about: "About",
+    about: "About Me",
     archives: "Archives",
     search: "Search",
   },
