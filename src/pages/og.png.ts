@@ -28,7 +28,7 @@ export const GET: APIRoute = async context => {
       type: "div",
       props: {
         style: {
-          background: "#fefbfb",
+          background: "#f4f5ef",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -44,10 +44,10 @@ export const GET: APIRoute = async context => {
                 position: "absolute",
                 top: "-1px",
                 right: "-1px",
-                border: "4px solid #000",
-                background: "#ecebeb",
-                opacity: "0.9",
-                borderRadius: "4px",
+                border: "1px solid #087f76",
+                background: "#b8e34b",
+                opacity: "0.55",
+                borderRadius: "0",
                 display: "flex",
                 justifyContent: "center",
                 margin: "2.5rem",
@@ -60,9 +60,9 @@ export const GET: APIRoute = async context => {
             type: "div",
             props: {
               style: {
-                border: "4px solid #000",
-                background: "#fefbfb",
-                borderRadius: "4px",
+                border: "1px solid #c7d2ca",
+                background: "#fafbf7",
+                borderRadius: "0",
                 display: "flex",
                 justifyContent: "center",
                 margin: "2rem",
@@ -98,14 +98,19 @@ export const GET: APIRoute = async context => {
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 72, fontWeight: "bold" },
+                              style: {
+                                color: "#142a2d",
+                                fontSize: 72,
+                                fontWeight: "bold",
+                                letterSpacing: "-4px",
+                              },
                               children: config.site.title,
                             },
                           },
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 28 },
+                              style: { color: "#5f706f", fontSize: 28 },
                               children: config.site.description,
                             },
                           },
@@ -120,6 +125,7 @@ export const GET: APIRoute = async context => {
                           justifyContent: "flex-end",
                           width: "100%",
                           marginBottom: "8px",
+                          color: "#087f76",
                           fontSize: 28,
                         },
                         children: {

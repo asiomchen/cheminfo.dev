@@ -14,6 +14,7 @@ import ShareLinks from "./_components/ShareLinks.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
+import UtterancesComments from "./_components/UtterancesComments.astro";
 import config from "@/config";
 
 export async function getStaticPaths() {
@@ -64,6 +65,7 @@ const locale = Astro.currentLocale ?? config.site.lang;
 const {
   title,
   description,
+  author,
   ogImage: initOgImage,
   canonicalURL,
   pubDatetime,
@@ -71,6 +73,7 @@ const {
   timezone,
   tags,
   hideEditPost,
+  hideComments,
 } = post.data;
 
 const { Content } = await render(post);
@@ -115,12 +118,16 @@ const ogImage = ogImageUrl
   >
     <h1
       style={{ viewTransitionName: toTransitionName(post.id) }}
-      class="text-accent inline-block text-2xl font-bold sm:text-3xl"
+      class="text-foreground inline-block max-w-4xl text-4xl leading-tight font-semibold sm:text-5xl"
     >
       {title}
     </h1>
 
-    <div class="my-2 flex items-center gap-2">
+    <div
+      class="border-border my-5 flex flex-wrap items-center gap-2 border-y py-3"
+    >
+      <span class="text-muted-foreground font-mono text-sm">By {author}</span>
+      <span aria-hidden="true" class="text-border">/</span>
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
       <span
         aria-hidden="true"
@@ -160,6 +167,8 @@ const ogImage = ogImageUrl
     <hr class="my-8 border-dashed" />
 
     <AdjacentPostNav {prevPost} {nextPost} />
+
+    {!hideComments && <UtterancesComments />}
   </main>
   <Footer />
 </PostLayout>

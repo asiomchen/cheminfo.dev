@@ -2,14 +2,15 @@ import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
   site: {
-    url: "https://astro-paper.pages.dev/",
-    title: "AstroPaper",
-    description: "A minimal, responsive and SEO-friendly Astro blog theme.",
-    author: "Sat Naing",
-    profile: "https://satna.ing",
-    ogImage: "default-og.jpg",
+    url: "https://cheminfo.dev/",
+    title: "cheminfo.dev",
+    description:
+      "Practical cheminformatics, molecular data, and reproducible workflows.",
+    author: "Anton Siomchen",
+    profile: "https://www.linkedin.com/in/anton-siomchen/",
+    ogImage: "og.png",
     lang: "en",
-    timezone: "Asia/Bangkok",
+    timezone: "Europe/Warsaw",
     dir: "ltr",
   },
   posts: {
@@ -24,15 +25,25 @@ export default defineAstroPaperConfig({
     showBackButton: true,
     editPost: {
       enabled: true,
-      url: "https://github.com/satnaing/astro-paper/edit/main/",
+      url: "https://github.com/asiomchen/cheminfo.dev/edit/main/",
     },
     search: "pagefind",
+    utterances: {
+      repo: "asiomchen/cheminfo.dev",
+      label: "blog-comment",
+    },
   },
   socials: [
-    { name: "github",   url: "https://github.com/satnaing/astro-paper" },
-    { name: "x",        url: "https://x.com/username" },
-    { name: "linkedin", url: "https://www.linkedin.com/in/username/" },
-    { name: "mail",     url: "mailto:yourmail@gmail.com" },
+    {
+      name: "github",
+      url: "https://github.com/asiomchen",
+      linkTitle: "Anton Siomchen on GitHub",
+    },
+    {
+      name: "linkedin",
+      url: "https://www.linkedin.com/in/anton-siomchen/",
+      linkTitle: "Anton Siomchen on LinkedIn",
+    },
   ],
   shareLinks: [
     { name: "whatsapp", url: "https://wa.me/?text=" },

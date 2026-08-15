@@ -59,6 +59,15 @@ interface FeaturesConfig {
    * Set to false to disable search entirely.
    */
   search?: "pagefind" | false;
+  /** GitHub Issues-backed comments shown on article pages. */
+  utterances?:
+    | {
+        /** Public GitHub repository in "owner/repo" format. */
+        repo: string;
+        /** Optional label assigned to issues created for comments. */
+        label?: string;
+      }
+    | false;
 }
 
 interface SocialLink {
