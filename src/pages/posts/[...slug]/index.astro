@@ -243,6 +243,7 @@ const ogImage = ogImageUrl
         : "-top-3";
 
       const copyButton = document.createElement("button");
+      copyButton.dataset.umamiEvent = "code-copy";
       copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
@@ -288,6 +289,8 @@ const ogImage = ogImageUrl
       const images = Array.from(article.querySelectorAll("img"));
       for (const image of images) {
         if (image.closest("a")) continue;
+        image.dataset.umamiEvent = "image-open";
+        if (image.alt) image.dataset.umamiEventAlt = image.alt.slice(0, 120);
         image.setAttribute("role", "button");
         image.setAttribute("tabindex", "0");
         image.setAttribute("aria-haspopup", "dialog");
@@ -314,6 +317,7 @@ const ogImage = ogImageUrl
 
       const closeButton = document.createElement("button");
       closeButton.type = "button";
+      closeButton.dataset.umamiEvent = "image-close";
       closeButton.setAttribute("aria-label", "Close image preview");
       closeButton.className =
         "absolute end-4 top-4 rounded p-2 text-3xl leading-none text-white";

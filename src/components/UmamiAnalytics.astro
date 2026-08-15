@@ -1,0 +1,34 @@
+---
+import {
+  PUBLIC_UMAMI_DOMAINS,
+  PUBLIC_UMAMI_HOST_URL,
+  PUBLIC_UMAMI_SCRIPT_URL,
+  PUBLIC_UMAMI_WEBSITE_ID,
+} from "astro:env/client";
+
+const scriptUrl =
+  PUBLIC_UMAMI_SCRIPT_URL?.trim() || "https://cloud.umami.is/script.js";
+const websiteId = PUBLIC_UMAMI_WEBSITE_ID?.trim();
+const hostUrl = PUBLIC_UMAMI_HOST_URL?.trim() || undefined;
+const domains = PUBLIC_UMAMI_DOMAINS?.trim() || undefined;
+---
+
+{
+  websiteId && (
+    <script
+      is:inline
+      defer
+      src={scriptUrl}
+      data-website-id={websiteId}
+      data-host-url={hostUrl}
+      data-domains={domains}
+      data-do-not-track="true"
+      data-exclude-search="true"
+      data-performance="true"
+    />
+  )
+}
+
+<script>
+  import "@/scripts/analytics";
+</script>
