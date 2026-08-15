@@ -20,7 +20,7 @@ Containers are a natural way to package the environment, but Docker is usually n
 
 Inspired by Pavel Zwerschke's article on [shipping Conda environments with Pixi](https://tech.quantco.com/blog/pixi-production), I tried this approach with a small project that runs the OpenMM installation test.
 
-## Why Singularity?
+## Why Singularity? 
 
 Singularity is a container runtime designed with shared systems and HPC workloads in mind. A SIF image is usually a single, compressed, read-only file. Instead of storing every environment file separately on the cluster, we can package the entire environment as one portable artifact.
 
