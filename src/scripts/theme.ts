@@ -32,6 +32,12 @@ function reflect(): void {
   document
     .querySelector("meta[name='theme-color']")
     ?.setAttribute("content", bg);
+
+  document.dispatchEvent(
+    new CustomEvent("site:theme-change", {
+      detail: { theme: themeValue },
+    })
+  );
 }
 
 function setup(): void {

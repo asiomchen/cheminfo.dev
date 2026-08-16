@@ -8,11 +8,11 @@ import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconX from "@/assets/icons/IconX.svg";
 import LinkButton from "./LinkButton.astro";
-import { stripBase, stripLocale } from "@/utils/withBase";
+import { getAssetPath, stripBase, stripLocale } from "@/utils/withBase";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
-const { site, features } = config;
+const { features } = config;
 
 const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
@@ -46,21 +46,32 @@ const isActive = (path: string) => {
   class="app-layout flex flex-col items-center justify-between sm:flex-row"
 >
   <div
-    class="border-border bg-background relative flex w-full items-baseline justify-between border-b py-4 sm:items-center sm:py-6"
+    class="border-border bg-background/90 grid w-full grid-cols-[minmax(0,1fr)_auto] items-center border-b py-4 backdrop-blur-md sm:flex sm:justify-between sm:py-6"
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}
-      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
+      class="group flex h-10 min-w-0 items-center gap-3 font-semibold whitespace-nowrap sm:my-auto"
     >
-      {site.title}
+      <img
+        src={getAssetPath("favicon.svg")}
+        alt=""
+        aria-hidden="true"
+        class="size-8 shrink-0 transition-transform duration-300 group-hover:rotate-[60deg]"
+      />
+      <span
+        class="inline-flex h-8 items-center font-mono text-lg leading-none tracking-[-0.05em] sm:text-xl"
+      >
+        cheminfo<span class="text-accent">.dev</span>
+      </span>
     </a>
     <nav
       id="nav-menu"
-      class="flex w-full flex-col items-center sm:ms-2 sm:flex-row sm:justify-end sm:space-x-4 sm:py-0"
+      class="contents sm:ms-2 sm:flex sm:flex-row sm:items-center sm:justify-end sm:space-x-4 sm:py-0"
     >
       <button
         id="menu-btn"
-        class="focus-outline self-end p-2 sm:hidden"
+        data-umami-event="menu-toggle"
+        class="focus-outline justify-self-end p-2 sm:hidden"
         aria-label={t.a11y.openMenu}
         aria-expanded="false"
         aria-controls="menu-items"
@@ -72,7 +83,7 @@ const isActive = (path: string) => {
       </button>
       <ul
         id="menu-items"
-        class="[&>li>a]:hover:text-accent mt-4 hidden w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
+        class="border-border [&>li>a]:hover:text-accent col-span-2 mt-4 hidden w-full grid-cols-2 place-content-center gap-2 border-t pt-3 font-mono text-sm sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:border-0 sm:pt-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
       >
         <li class="col-span-2">
           <a
@@ -148,6 +159,7 @@ const isActive = (path: string) => {
             <li class="col-span-1 flex items-center justify-center">
               <button
                 id="theme-btn"
+                data-umami-event="theme-toggle"
                 class="focus-outline hover:[&>svg]:stroke-accent relative size-12 p-4 sm:size-8"
                 title={t.a11y.toggleTheme}
                 aria-label="auto"

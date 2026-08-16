@@ -1,0 +1,30 @@
+---
+import config from "@/config";
+
+const scriptUrl =
+  config.site.umami?.scriptUrl?.trim() || "https://cloud.umami.is/script.js";
+const websiteId = config.site.umami?.websiteId?.trim();
+const hostUrl = config.site.umami?.hostUrl?.trim() || undefined;
+const domains = config.site.umami?.domains?.trim() || undefined;
+const doNotTrack = config.site.umami?.doNotTrack ?? false;
+---
+
+{
+  websiteId && (
+    <script
+      is:inline
+      defer
+      src={scriptUrl}
+      data-website-id={websiteId}
+      data-host-url={hostUrl}
+      data-domains={domains}
+      data-do-not-track={doNotTrack ? "true" : undefined}
+      data-exclude-search="true"
+      data-performance="true"
+    />
+  )
+}
+
+<script>
+  import "@/scripts/analytics";
+</script>

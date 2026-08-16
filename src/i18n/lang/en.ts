@@ -3,9 +3,9 @@ import type { UIStrings } from "../types";
 export default {
   nav: {
     home: "Home",
-    posts: "Posts",
-    tags: "Tags",
-    about: "About",
+    posts: "Blog",
+    tags: "Topics",
+    about: "About Me",
     archives: "Archives",
     search: "Search",
   },
@@ -28,30 +28,32 @@ export default {
     page: "Page",
   },
   home: {
-    socialLinks: "Social Links",
-    featured: "Featured",
-    recentPosts: "Recent Posts",
-    allPosts: "All Posts",
+    socialLinks: "Elsewhere",
+    featured: "Featured analysis",
+    recentPosts: "Latest field notes",
+    allPosts: "Browse the blog",
   },
   footer: {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",
   },
   pages: {
-    tagTitle: "Tag",
-    tagDesc: "All the articles with the tag",
+    tagTitle: "Topic",
+    tagDesc: "Articles filed under",
 
-    tagsTitle: "Tags",
-    tagsDesc: "All the tags used in posts.",
+    tagsTitle: "Topics",
+    tagsDesc:
+      "Browse the methods, tools, and data practices covered in the blog.",
 
-    postsTitle: "Posts",
-    postsDesc: "All the articles I've posted.",
+    postsTitle: "Blog",
+    postsDesc:
+      "Practical notes on molecular data, cheminformatics tooling, and reproducible computational workflows.",
 
     archivesTitle: "Archives",
-    archivesDesc: "All the articles I've archived.",
+    archivesDesc: "A chronological index of every published field note.",
 
     searchTitle: "Search",
-    searchDesc: "Search any article ...",
+    searchDesc: "Search the full cheminfo.dev blog.",
   },
   a11y: {
     skipToContent: "Skip to content",

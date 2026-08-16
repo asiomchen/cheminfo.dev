@@ -19,6 +19,19 @@ interface SiteConfig {
   dir?: "ltr" | "rtl" | "auto";
   /** Google Search Console verification meta tag value */
   googleVerification?: string;
+  /** Umami analytics settings. Environment variables remain as fallbacks. */
+  umami?: {
+    /** Umami website UUID. Analytics is disabled when omitted. */
+    websiteId?: string;
+    /** Tracker script URL. Defaults to Umami Cloud's script URL. */
+    scriptUrl?: string;
+    /** Optional Umami API host URL for self-hosted instances. */
+    hostUrl?: string;
+    /** Comma-separated domains accepted by the tracker. */
+    domains?: string;
+    /** Respect visitors' browser Do Not Track preference. Defaults to false. */
+    doNotTrack?: boolean;
+  };
 }
 
 interface PostsConfig {
@@ -59,6 +72,15 @@ interface FeaturesConfig {
    * Set to false to disable search entirely.
    */
   search?: "pagefind" | false;
+  /** GitHub Issues-backed comments shown on article pages. */
+  utterances?:
+    | {
+        /** Public GitHub repository in "owner/repo" format. */
+        repo: string;
+        /** Optional label assigned to issues created for comments. */
+        label?: string;
+      }
+    | false;
 }
 
 interface SocialLink {
@@ -115,7 +137,7 @@ type ResolvedSiteConfig = Required<
     | "ogImage"
   >
 > &
-  Pick<SiteConfig, "profile" | "googleVerification">;
+  Pick<SiteConfig, "profile" | "googleVerification" | "umami">;
 
 export interface ResolvedAstroPaperConfig {
   site: ResolvedSiteConfig;

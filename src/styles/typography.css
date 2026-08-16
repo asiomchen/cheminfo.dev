@@ -3,7 +3,7 @@
 @layer base {
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
-    @apply prose;
+    @apply prose max-w-[72ch] text-[1.05rem] leading-[1.78];
 
     h1,
     h2,
@@ -11,10 +11,11 @@
     h4,
     th {
       @apply text-foreground mb-3;
+      font-family: var(--font-editorial);
     }
 
     h3 {
-      @apply italic;
+      @apply not-italic;
     }
 
     p,
@@ -28,7 +29,7 @@
     }
 
     a {
-      @apply text-foreground hover:text-accent wrap-break-word decoration-dashed underline-offset-4 focus-visible:no-underline;
+      @apply text-accent wrap-break-word decoration-1 underline-offset-4 hover:decoration-2 focus-visible:no-underline;
     }
 
     ul {
@@ -44,7 +45,7 @@
     }
 
     img {
-      @apply border-border mx-auto border;
+      @apply border-border bg-surface mx-auto border p-2;
     }
 
     img[role="button"] {
@@ -66,7 +67,7 @@
       }
 
       th {
-        @apply py-1.5;
+        @apply bg-muted/60 py-1.5;
       }
 
       th[align="center"],
@@ -86,7 +87,7 @@
     }
 
     code {
-      @apply bg-muted/75 text-foreground rounded p-1 wrap-break-word before:content-none after:content-none;
+      @apply bg-muted/75 text-foreground rounded-none p-1 font-mono wrap-break-word before:content-none after:content-none;
     }
 
     .astro-code code {
@@ -94,7 +95,7 @@
     }
 
     blockquote {
-      @apply border-s-accent/80 wrap-break-word opacity-80;
+      @apply border-s-accent bg-surface border-s-4 py-1 wrap-break-word opacity-100;
     }
 
     details:not(.callout) {
@@ -112,7 +113,7 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    @apply outline-border flex rounded-none border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
   }
 
   html[data-theme="dark"] .astro-code {

@@ -1,0 +1,73 @@
+---
+import config from "@/config";
+
+const utterances = config.features.utterances;
+const isConfigured = utterances !== false;
+const repo = isConfigured ? utterances.repo : undefined;
+const label = isConfigured ? utterances.label : undefined;
+---
+
+{
+  isConfigured && repo && (
+    <section
+      id="comments"
+      class="border-border mt-12 border-t pt-10"
+      aria-labelledby="comments-heading"
+    >
+      <div class="mb-6">
+        <p class="eyebrow mb-2">Join the discussion</p>
+        <h2 id="comments-heading" class="text-3xl font-semibold">
+          Comments
+        </h2>
+      </div>
+      <div id="utterances-comments" data-repo={repo} data-label={label} />
+    </section>
+  )
+}
+
+<script>
+  const UTTERANCES_ORIGIN = "https://utteranc.es";
+
+  function currentUtterancesTheme(): "github-light" | "github-dark" {
+    return document.documentElement.dataset.theme === "dark"
+      ? "github-dark"
+      : "github-light";
+  }
+
+  function mountUtterances(): void {
+    const container = document.querySelector<HTMLElement>(
+      "#utterances-comments"
+    );
+    if (!container || container.querySelector("script, iframe")) return;
+
+    const { repo, label } = container.dataset;
+    if (!repo) return;
+
+    const script = document.createElement("script");
+    script.src = `${UTTERANCES_ORIGIN}/client.js`;
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    script.setAttribute("repo", repo);
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", currentUtterancesTheme());
+    if (label) script.setAttribute("label", label);
+    container.appendChild(script);
+  }
+
+  function syncUtterancesTheme(): void {
+    const frame = document.querySelector<HTMLIFrameElement>(
+      "iframe.utterances-frame"
+    );
+    frame?.contentWindow?.postMessage(
+      {
+        type: "set-theme",
+        theme: currentUtterancesTheme(),
+      },
+      UTTERANCES_ORIGIN
+    );
+  }
+
+  mountUtterances();
+  document.addEventListener("astro:page-load", mountUtterances);
+  document.addEventListener("site:theme-change", syncUtterancesTheme);
+</script>

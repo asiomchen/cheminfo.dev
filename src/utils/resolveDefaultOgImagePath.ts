@@ -28,7 +28,7 @@ export function resolveDefaultOgImagePath(
     filename.includes("\\")
   ) {
     throw new Error(
-      `site.ogImage must be a single filename in public/ (e.g. "default-og.jpg"), got "${filename}"`
+      `site.ogImage must be a single filename in public/ (e.g. "og.png"), got "${filename}"`
     );
   }
 
@@ -40,7 +40,7 @@ export function resolveDefaultOgImagePath(
 
   if (!existsInPublic(filename)) {
     throw new Error(
-      `AstroPaper: missing public/${filename}. Add that file, or set site.ogImage to an existing file under public/, or enable features.dynamicOgImage to fall back to /og.png.`
+      `Missing public/${filename}. Add that file, point site.ogImage to an existing public asset, or enable dynamic OG images.`
     );
   }
 

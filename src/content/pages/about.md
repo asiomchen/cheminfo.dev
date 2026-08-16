@@ -1,37 +1,47 @@
 ---
-title: "About"
-description: "A bit about me and this blog."
+title: "About Me"
+description: "About Anton Siomchen, a medicinal chemist and software engineer working at the intersection of chemistry, data, and software development."
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+Hi, I’m Anton Siomchen—a medicinal chemist and software engineer working at the intersection of chemistry, data, and software development.
 
-![Astro Paper](@/assets/images/astropaper-og.jpg)
+I’m currently a Senior Software Engineer specialising in chemoinformatics at EPAM Systems. My work focuses on building practical software for chemical data, virtual screening, chemical-space exploration, and computer-aided drug discovery.
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+## What I work on
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+I’m particularly interested in:
 
-## Features
+- Cheminformatics software architecture
+- RDKit and Python tooling
+- Chemical databases and PostgreSQL cartridges
+- Molecular fingerprints, descriptors, and similarity search
+- Reproducible drug-discovery workflows
+- Scientific software usability and documentation
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+## Open-source projects
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+A few projects and contributions worth highlighting:
 
-and so much more.
+- **[MolAlchemy](https://pypi.org/project/molalchemy/)** — a Python library connecting SQLAlchemy with RDKit and Bingo chemical database cartridges. It provides typed molecular and reaction fields alongside chemical queries and database tooling.
+- **[Mols2Bases](https://www.linkedin.com/posts/anton-siomchen_%F0%9D%97%A0%F0%9D%97%BC%F0%9D%97%B9%F0%9D%98%80%F0%9D%9F%AE%F0%9D%97%95%F0%9D%97%AE%F0%9D%98%80-%F0%9D%97%BA%F0%9D%97%BC%F0%9D%97%B9%F0%9D%97%B2%F0%9D%97%B0%F0%9D%98%82%F0%9D%97%B9%F0%9D%97%AE%F0%9D%97%BF-activity-7442656778120503296-YLOB)** — an Obsidian plugin for importing molecular datasets, rendering structures with RDKit.js, and filtering them using text or SMARTS queries.
+- **[RDKit](https://zenodo.org/records/17746401)** — contributions to fixes and improvements in the open-source cheminformatics toolkit.
+- **[Scikit-Mol](https://www.linkedin.com/posts/anton-siomchen_rdkit-activity-7298778222375108608-WZ5t)** — documentation and developer-experience improvements for its RDKit and scikit-learn integration.
 
-## Show your support
+## Background
 
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
+I hold an MSc in Medicinal Chemistry from Jagiellonian University. Before moving fully into software engineering, I worked across drug-discovery data science, RDKit-based ligand generation, bioinorganic chemistry, and photodynamic-therapy research, including an academic project at the University of Glasgow.
 
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
+This scientific background shapes how I approach software: chemical assumptions, data provenance, and experimental context should remain visible in the implementation.
 
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
+## About this blog
 
-Kyay zuu! 🙏🏼
+I use cheminfo.dev to document what I learn while building scientific software.
+
+The posts focus on practical cheminformatics: molecular representations, chemical databases, data-quality problems, RDKit workflows, open-source tools, and the engineering decisions behind reproducible computational chemistry.
+
+The aim is to publish useful technical notes—not polished marketing material—and to explain both what worked and what did not.
+
+## Elsewhere
+
+- [LinkedIn](https://www.linkedin.com/in/anton-siomchen/)
+- [GitHub](https://github.com/asiomchen)

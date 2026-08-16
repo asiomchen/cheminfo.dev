@@ -10,22 +10,58 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, ...props } = data;
+const {
+  title,
+  description,
+  tags,
+  featured,
+  author,
+  pubDatetime,
+  modDatetime,
+  timezone,
+} = data;
 ---
 
-<li class="my-6">
-  <a
-    href={getPostUrl(id, filePath, Astro.currentLocale)}
-    class:list={[
-      "text-accent inline-block text-lg font-medium",
-      "decoration-dashed underline-offset-4 hover:underline",
-      "focus-visible:no-underline focus-visible:underline-offset-0",
-    ]}
-  >
-    <Heading transition:name={toTransitionName(id)}>
-      {title}
-    </Heading>
-  </a>
-  <Datetime {...props} />
-  <p>{description}</p>
+<li class="group border-border border-t py-7">
+  <article>
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {featured && <span class="eyebrow text-accent">Featured</span>}
+        <span class="text-muted-foreground font-mono text-sm">By {author}</span>
+        <span aria-hidden="true" class="text-border">/</span>
+        <Datetime {pubDatetime} {modDatetime} {timezone} />
+      </div>
+      {
+        tags.length > 0 && (
+          <span class="text-muted-foreground font-mono text-xs tracking-wider uppercase">
+            {tags.slice(0, 2).join(" · ")}
+          </span>
+        )
+      }
+    </div>
+    <a
+      href={getPostUrl(id, filePath, Astro.currentLocale)}
+      class="focus-visible:no-underline"
+    >
+      <Heading
+        transition:name={toTransitionName(id)}
+        class:list={[
+          "group-hover:text-accent text-foreground text-2xl leading-tight font-semibold transition-colors",
+          { "max-w-3xl text-3xl sm:text-4xl": featured },
+        ]}
+      >
+        {title}
+      </Heading>
+    </a>
+    <p class="text-muted-foreground mt-3 max-w-2xl leading-relaxed">
+      {description}
+    </p>
+    <a
+      href={getPostUrl(id, filePath, Astro.currentLocale)}
+      class="text-accent mt-5 inline-flex items-center gap-2 font-mono text-sm font-semibold"
+      aria-label={`Read ${title}`}
+    >
+      Read article <span aria-hidden="true">→</span>
+    </a>
+  </article>
 </li>
