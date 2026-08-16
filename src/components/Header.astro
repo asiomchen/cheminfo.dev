@@ -46,11 +46,11 @@ const isActive = (path: string) => {
   class="app-layout flex flex-col items-center justify-between sm:flex-row"
 >
   <div
-    class="border-border bg-background/90 relative flex w-full items-center justify-between border-b py-4 backdrop-blur-md sm:py-6"
+    class="border-border bg-background/90 grid w-full grid-cols-[minmax(0,1fr)_auto] items-center border-b py-4 backdrop-blur-md sm:flex sm:justify-between sm:py-6"
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}
-      class="group absolute flex h-10 items-center gap-3 font-semibold whitespace-nowrap sm:static sm:my-auto"
+      class="group flex h-10 min-w-0 items-center gap-3 font-semibold whitespace-nowrap sm:my-auto"
     >
       <img
         src={getAssetPath("favicon.svg")}
@@ -66,12 +66,12 @@ const isActive = (path: string) => {
     </a>
     <nav
       id="nav-menu"
-      class="flex w-full flex-col items-center sm:ms-2 sm:flex-row sm:justify-end sm:space-x-4 sm:py-0"
+      class="contents sm:ms-2 sm:flex sm:flex-row sm:items-center sm:justify-end sm:space-x-4 sm:py-0"
     >
       <button
         id="menu-btn"
         data-umami-event="menu-toggle"
-        class="focus-outline self-end p-2 sm:hidden"
+        class="focus-outline justify-self-end p-2 sm:hidden"
         aria-label={t.a11y.openMenu}
         aria-expanded="false"
         aria-controls="menu-items"
@@ -83,7 +83,7 @@ const isActive = (path: string) => {
       </button>
       <ul
         id="menu-items"
-        class="[&>li>a]:hover:text-accent mt-4 hidden w-44 grid-cols-2 place-content-center gap-2 font-mono text-sm sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
+        class="border-border [&>li>a]:hover:text-accent col-span-2 mt-4 hidden w-full grid-cols-2 place-content-center gap-2 border-t pt-3 font-mono text-sm sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:border-0 sm:pt-0 sm:[&>li]:h-8 [&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium sm:[&>li>a]:px-2 sm:[&>li>a]:py-1"
       >
         <li class="col-span-2">
           <a
