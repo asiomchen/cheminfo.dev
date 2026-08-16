@@ -1,16 +1,12 @@
 ---
-import {
-  PUBLIC_UMAMI_DOMAINS,
-  PUBLIC_UMAMI_HOST_URL,
-  PUBLIC_UMAMI_SCRIPT_URL,
-  PUBLIC_UMAMI_WEBSITE_ID,
-} from "astro:env/client";
+import config from "@/config";
 
 const scriptUrl =
-  PUBLIC_UMAMI_SCRIPT_URL?.trim() || "https://cloud.umami.is/script.js";
-const websiteId = PUBLIC_UMAMI_WEBSITE_ID?.trim();
-const hostUrl = PUBLIC_UMAMI_HOST_URL?.trim() || undefined;
-const domains = PUBLIC_UMAMI_DOMAINS?.trim() || undefined;
+  config.site.umami?.scriptUrl?.trim() || "https://cloud.umami.is/script.js";
+const websiteId = config.site.umami?.websiteId?.trim();
+const hostUrl = config.site.umami?.hostUrl?.trim() || undefined;
+const domains = config.site.umami?.domains?.trim() || undefined;
+const doNotTrack = config.site.umami?.doNotTrack ?? false;
 ---
 
 {
@@ -22,7 +18,7 @@ const domains = PUBLIC_UMAMI_DOMAINS?.trim() || undefined;
       data-website-id={websiteId}
       data-host-url={hostUrl}
       data-domains={domains}
-      data-do-not-track="true"
+      data-do-not-track={doNotTrack ? "true" : undefined}
       data-exclude-search="true"
       data-performance="true"
     />

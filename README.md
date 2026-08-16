@@ -35,9 +35,9 @@ comments for that article.
 
 ## Umami analytics
 
-Umami is enabled only when `PUBLIC_UMAMI_WEBSITE_ID` is set. Copy
-`.env.example` to `.env` for local testing, or add the variables to the hosting
-environment:
+Umami is enabled when `site.umami.websiteId` is set in `astro-paper.config.ts`.
+The `PUBLIC_UMAMI_*` variables remain fallbacks; copy `.env.example` to `.env`
+for local testing, or add them to the hosting environment:
 
 ```dotenv
 PUBLIC_UMAMI_WEBSITE_ID=your-website-id
@@ -46,8 +46,9 @@ PUBLIC_UMAMI_DOMAINS=cheminfo.dev,www.cheminfo.dev
 ```
 
 For a self-hosted instance, change `PUBLIC_UMAMI_SCRIPT_URL` and optionally set
-`PUBLIC_UMAMI_HOST_URL`. The tracker respects Do Not Track, excludes query
-parameters from pageview URLs, and collects Core Web Vitals.
+`PUBLIC_UMAMI_HOST_URL`. To honor visitors' browser Do Not Track preference,
+set `site.umami.doNotTrack` to `true`; it is disabled by default. The tracker
+excludes query parameters from pageview URLs and collects Core Web Vitals.
 
 To start an isolated Umami instance for local testing, run:
 

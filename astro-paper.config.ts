@@ -12,6 +12,12 @@ export default defineAstroPaperConfig({
     lang: "en",
     timezone: "Europe/Warsaw",
     dir: "ltr",
+    umami: {
+      websiteId: "f901625a-6341-4170-8579-6a29bbfca2fb",
+      scriptUrl: "https://umami.cheminfo.dev/script.js",
+      // Opt in to honoring visitors' browser Do Not Track preference.
+      doNotTrack: false,
+    },
   },
   posts: {
     perPage: 4,
