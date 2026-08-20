@@ -15,6 +15,9 @@ Run the complete production check with:
 pnpm build
 ```
 
+The reusable RDKit and Three.js molecular renderer is documented in
+[docs/molecule-viewer.md](docs/molecule-viewer.md).
+
 ## Publishing a note
 
 Add a Markdown or MDX file to `src/content/posts`. Every published note needs a title, description, publication date, author, and tags. See the existing notes for working examples.

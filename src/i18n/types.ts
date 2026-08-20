@@ -63,7 +63,21 @@ export interface UIStrings {
   };
   notFound: {
     title: string;
+    eyebrow: string;
+    heading: string;
     message: string;
+    compoundName: string;
+    formula: string;
+    molecularWeightLabel: string;
+    molecularWeight: string;
+    viewerLabel: string;
+    viewerLoading: string;
+    viewerError: string;
+    viewerHint: string;
+    viewerPause: string;
+    viewerPlay: string;
+    viewerReset: string;
+    viewerSource: string;
     goHome: string;
   };
 }

@@ -1,0 +1,131 @@
+---
+author: Anton Siomchen
+pubDatetime: 2026-08-20T18:00:00+02:00
+title: "Serotonin Reuptake Inhibitors: Three Structures in the Molecule Viewer"
+draft: true
+tags:
+  - cheminformatics
+  - RDKit
+  - Three.js
+  - pharmacology
+description: Compare fluoxetine, sertraline, and escitalopram while testing SMILES, 3D SDF conformers, and hydrogen display modes in an interactive molecular viewer.
+---
+
+import MoleculeViewer from "@/components/MoleculeViewer.astro";
+import sertralineSdf from "@/assets/molecules/sertraline.sdf?raw";
+import escitalopramSdf from "@/assets/molecules/escitalopram.sdf?raw";
+
+“5-HT inhibitor” is convenient shorthand, but it is not quite what selective
+serotonin reuptake inhibitors do. These compounds inhibit the serotonin
+transporter, reducing reuptake of 5-hydroxytryptamine (5-HT); they do not inhibit
+the serotonin molecule itself. This distinction matters when chemical
+structures and pharmacological mechanisms are discussed together.
+
+The three examples below are all classified as SSRIs, yet their structures are
+visibly different. They also provide a useful test of two common molecular data
+paths: connectivity supplied as SMILES and a computed conformer supplied as an
+SDF record.
+
+> This is a cheminformatics visualization, not medical guidance. The displayed
+> coordinates are not evidence of a bioactive conformation or clinical behavior.
+
+## Fluoxetine: connectivity from SMILES
+
+[Fluoxetine](https://pubchem.ncbi.nlm.nih.gov/compound/Fluoxetine) is represented
+here by a SMILES string from its PubChem record. SMILES encodes atoms, bonds, and
+stereochemical annotations, but it does not normally carry Cartesian
+coordinates. RDKit therefore generates a two-dimensional layout before the
+viewer builds its ball-and-stick scene. Explicit hydrogens are added after that
+coordinate generation step.
+
+<MoleculeViewer
+  smiles="CNCCC(c1ccccc1)Oc1ccc(cc1)C(F)(F)F"
+  hydrogens="add"
+  viewerHeight="21rem"
+  viewPadding={1.05}
+  class="my-8"
+  ariaLabel="Interactive molecular model of fluoxetine generated from SMILES"
+  title="Fluoxetine"
+  titleHref="https://pubchem.ncbi.nlm.nih.gov/compound/Fluoxetine"
+  subtitle="C₁₇H₁₈F₃NO"
+  sourceLabel="SMILES · PubChem CID 3386"
+  sourceHref="https://pubchem.ncbi.nlm.nih.gov/compound/3386"
+  linkTarget="_blank"
+/>
+
+The generated coordinates make connectivity easy to inspect, but rotating the
+model also reveals the limitation: every atom begins in a flat depiction. That
+is appropriate for a structure diagram, not a claim about a preferred
+three-dimensional shape.
+
+## Sertraline: preserving a 3D conformer
+
+[Sertraline](https://pubchem.ncbi.nlm.nih.gov/compound/sertraline) contains two
+defined stereocenters and a compact tetralin framework with a dichlorophenyl
+substituent. This viewer starts from PubChem's computed 3D SDF conformer and
+preserves the hydrogens already present in that record.
+
+<MoleculeViewer
+  sdf={sertralineSdf}
+  hydrogens="preserve"
+  viewerHeight="23rem"
+  viewPadding={1.12}
+  class="my-8"
+  ariaLabel="Interactive computed 3D conformer of sertraline"
+  title="Sertraline"
+  titleHref="https://pubchem.ncbi.nlm.nih.gov/compound/sertraline"
+  subtitle="C₁₇H₁₇Cl₂N"
+  sourceLabel="3D conformer · PubChem CID 68617"
+  sourceHref="https://pubchem.ncbi.nlm.nih.gov/compound/68617"
+  linkTarget="_blank"
+/>
+
+Unlike the SMILES-derived layout, the SDF supplies x, y, and z coordinates.
+Those coordinates describe one computed conformer. Other conformers remain
+possible, and a protein-bound geometry would need experimental or modeled
+complex data rather than this isolated-molecule record.
+
+## Escitalopram: stereochemistry without explicit hydrogens
+
+[Escitalopram](https://pubchem.ncbi.nlm.nih.gov/compound/Escitalopram) is the
+S-enantiomer of citalopram. Its PubChem conformer contains explicit hydrogens,
+but this example removes them before rendering so the heavier-atom framework
+and defined stereocenter remain visually prominent.
+
+<MoleculeViewer
+  sdf={escitalopramSdf}
+  hydrogens="remove"
+  viewerHeight="22rem"
+  viewPadding={1.18}
+  class="my-8"
+  ariaLabel="Interactive computed 3D conformer of escitalopram without explicit hydrogens"
+  title="Escitalopram"
+  titleHref="https://pubchem.ncbi.nlm.nih.gov/compound/Escitalopram"
+  subtitle="C₂₀H₂₁FN₂O"
+  sourceLabel="3D conformer · PubChem CID 146570"
+  sourceHref="https://pubchem.ncbi.nlm.nih.gov/compound/146570"
+  linkTarget="_blank"
+/>
+
+Removing hydrogen atoms changes the visual density, not the molecular identity
+encoded by the record. It is often useful for emphasizing a scaffold, although
+explicit hydrogens can be important when discussing protonation, hydrogen
+bonding, or a particular experimental structure.
+
+## Comparing the representations
+
+<div class="max-w-full overflow-x-auto">
+
+| Compound | PubChem CID | Formula | Viewer input | Hydrogen mode | Structural feature |
+| --- | ---: | --- | --- | --- | --- |
+| Fluoxetine | 3386 | C₁₇H₁₈F₃NO | SMILES with generated 2D coordinates | Add | Flexible diaryl ether with a trifluoromethyl group |
+| Sertraline | 68617 | C₁₇H₁₇Cl₂N | Computed 3D SDF conformer | Preserve | Tetralin framework with two defined stereocenters |
+| Escitalopram | 146570 | C₂₀H₂₁FN₂O | Computed 3D SDF conformer | Remove | S-enantiomer with an isobenzofuran framework and nitrile |
+
+</div>
+
+The shared pharmacological class does not imply a shared scaffold. More
+importantly for visualization, the input format determines what the renderer
+can honestly show. A SMILES-derived layout demonstrates connectivity; an SDF
+conformer adds one possible geometry. Neither representation, by itself,
+explains transporter affinity, selectivity, efficacy, or safety.
