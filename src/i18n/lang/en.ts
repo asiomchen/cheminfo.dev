@@ -69,7 +69,7 @@ export default {
     title: "404 Not Found",
     eyebrow: "Error 404 / Molecular match",
     heading: "Page not found.",
-    message: "The page is missing, but Lesinurad weighs in at",
+    message: "The page is missing, but Lesinurad weighs",
     compoundName: "Lesinurad",
     formula: "C₁₇H₁₄BrN₃O₂S",
     molecularWeightLabel: "Molecular weight",
