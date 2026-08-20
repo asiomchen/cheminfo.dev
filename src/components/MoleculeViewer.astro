@@ -1,0 +1,454 @@
+---
+type MoleculeSourceProps =
+  { smiles: string; sdf?: never } | { smiles?: never; sdf: string };
+
+type ViewerProps = {
+  ariaLabel?: string;
+  loadingLabel?: string;
+  errorLabel?: string;
+  interactionHint?: string;
+  pauseLabel?: string;
+  playLabel?: string;
+  resetLabel?: string;
+  title?: string;
+  titleHref?: string;
+  subtitle?: string;
+  sourceLabel?: string;
+  sourceHref?: string;
+  autoRotate?: boolean;
+  rotationSpeed?: number;
+  viewPadding?: number;
+  hydrogens?: "preserve" | "add" | "remove";
+  viewerHeight?: string;
+  mobileAspectRatio?: number;
+  linkTarget?: "_self" | "_blank";
+  class?: string;
+};
+
+type Props = MoleculeSourceProps & ViewerProps;
+
+const {
+  ariaLabel = "Interactive molecular model",
+  loadingLabel = "Loading molecule…",
+  errorLabel = "Molecule viewer unavailable",
+  interactionHint = "Drag to rotate · Scroll to zoom",
+  pauseLabel = "Pause rotation",
+  playLabel = "Start rotation",
+  resetLabel = "Reset view",
+  smiles,
+  sdf,
+  title,
+  titleHref,
+  subtitle,
+  sourceLabel,
+  sourceHref,
+  autoRotate = false,
+  rotationSpeed = 10,
+  viewPadding = 1.1,
+  hydrogens = "preserve",
+  viewerHeight = "clamp(24rem, 52vw, 30rem)",
+  mobileAspectRatio = 4 / 3,
+  linkTarget = "_self",
+  class: className,
+} = Astro.props;
+
+if ((smiles === undefined) === (sdf === undefined)) {
+  throw new Error("MoleculeViewer requires exactly one of `smiles` or `sdf`");
+}
+
+if (!Number.isFinite(viewPadding) || viewPadding < 1) {
+  throw new Error("MoleculeViewer `viewPadding` must be at least 1");
+}
+
+if (!Number.isFinite(rotationSpeed) || rotationSpeed <= 0) {
+  throw new Error("MoleculeViewer `rotationSpeed` must be greater than 0");
+}
+
+if (!Number.isFinite(mobileAspectRatio) || mobileAspectRatio <= 0) {
+  throw new Error("MoleculeViewer `mobileAspectRatio` must be greater than 0");
+}
+
+if (viewerHeight.trim() === "") {
+  throw new Error("MoleculeViewer `viewerHeight` must not be empty");
+}
+
+const moleculeSource = JSON.stringify({
+  format: smiles === undefined ? "sdf" : "smiles",
+  value: smiles ?? sdf,
+}).replaceAll("<", "\\u003c");
+const hasCaption = title || subtitle || sourceLabel;
+---
+
+<figure
+  class:list={["viewer-shell surface-panel not-prose", className]}
+  style={`--viewer-height: ${viewerHeight}; --viewer-mobile-aspect-ratio: ${mobileAspectRatio};`}
+  data-molecule-viewer
+  data-error-label={errorLabel}
+  data-pause-label={pauseLabel}
+  data-play-label={playLabel}
+  data-auto-rotate={String(autoRotate)}
+  data-rotation-speed={String(rotationSpeed)}
+  data-view-padding={String(viewPadding)}
+  data-hydrogens={hydrogens}
+  aria-label={hasCaption ? undefined : ariaLabel}
+>
+  <script
+    type="application/json"
+    data-molecule-source
+    is:inline
+    set:html={moleculeSource}
+  />
+
+  <slot name="backdrop" />
+
+  <div class="viewer-field">
+    <canvas class="viewer-canvas" aria-label={ariaLabel} role="img">
+      {ariaLabel}
+    </canvas>
+
+    <p class="viewer-status" data-viewer-status role="status">
+      <span class="loading-dot" aria-hidden="true"></span>
+      {loadingLabel}
+    </p>
+
+    <p class="viewer-hint" data-viewer-hint>{interactionHint}</p>
+
+    <div class="viewer-controls" data-viewer-controls hidden>
+      <button
+        type="button"
+        class="viewer-button"
+        data-viewer-spin
+        aria-label={pauseLabel}
+        title={pauseLabel}
+        aria-pressed="true"
+      >
+        <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5v14M16 5v14"></path>
+        </svg>
+        <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m8 5 11 7-11 7z"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="viewer-button"
+        data-viewer-reset
+        aria-label={resetLabel}
+        title={resetLabel}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4.1 7A9 9 0 1 1 3 13"></path>
+          <path d="M4 3v4h4"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {
+    hasCaption && (
+      <figcaption class="viewer-caption">
+        {(title || subtitle) && (
+          <div class="molecule-details">
+            {title && titleHref && (
+              <a
+                class="molecule-title molecule-title-link"
+                href={titleHref}
+                target={linkTarget}
+                rel={linkTarget === "_blank" ? "noreferrer" : undefined}
+              >
+                {title}
+              </a>
+            )}
+            {title && !titleHref && <span class="molecule-title">{title}</span>}
+            {subtitle && <span class="molecule-subtitle">{subtitle}</span>}
+          </div>
+        )}
+        {sourceLabel && sourceHref && (
+          <a
+            class="source-link"
+            href={sourceHref}
+            target={linkTarget}
+            rel={linkTarget === "_blank" ? "noreferrer" : undefined}
+          >
+            {sourceLabel}
+          </a>
+        )}
+        {sourceLabel && !sourceHref && (
+          <span class="source-label">{sourceLabel}</span>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+<script>
+  import "@/scripts/moleculeViewer";
+</script>
+
+<style>
+  .viewer-shell {
+    position: relative;
+    isolation: isolate;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .viewer-field {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    height: var(--viewer-height);
+    box-sizing: border-box;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--accent) 5%, transparent),
+        transparent 62%
+      ),
+      color-mix(in srgb, var(--surface-strong) 94%, var(--background));
+  }
+
+  .viewer-field::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    content: "";
+    pointer-events: none;
+  }
+
+  .viewer-canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .viewer-canvas:active {
+    cursor: grabbing;
+  }
+
+  .viewer-status,
+  .viewer-hint {
+    position: absolute;
+    z-index: 3;
+    margin: 0;
+    font-family: var(--font-google-sans-code);
+    font-size: 0.68rem;
+  }
+
+  .viewer-status {
+    top: 0.9rem;
+    left: 0.9rem;
+    display: inline-flex;
+    max-width: calc(100% - 1.8rem);
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
+    padding: 0.45rem 0.6rem;
+    backdrop-filter: blur(0.35rem);
+  }
+
+  .viewer-status[hidden] {
+    display: none;
+  }
+
+  .loading-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    flex: 0 0 auto;
+    border-radius: 9999px;
+    background: var(--accent);
+    animation: loading-pulse 1.2s ease-in-out infinite;
+  }
+
+  .viewer-status[data-error="true"] .loading-dot {
+    background: #d95151;
+    animation: none;
+  }
+
+  .viewer-hint {
+    top: 1rem;
+    right: 1rem;
+    color: var(--muted-foreground);
+    pointer-events: none;
+  }
+
+  .viewer-hint[hidden] {
+    display: none;
+  }
+
+  .viewer-controls {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 4;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .viewer-controls[hidden] {
+    display: none;
+  }
+
+  .viewer-button {
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    place-items: center;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    color: var(--foreground);
+    backdrop-filter: blur(0.35rem);
+    transition:
+      border-color 150ms ease,
+      color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .viewer-button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .viewer-button svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .viewer-button .play-icon,
+  .viewer-button[aria-pressed="false"] .pause-icon {
+    display: none;
+  }
+
+  .viewer-button[aria-pressed="false"] .play-icon {
+    display: block;
+  }
+
+  .viewer-caption {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    min-height: 4.6rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-sizing: border-box;
+    padding: 0.9rem 1rem;
+    font-family: var(--font-google-sans-code);
+    opacity: 1;
+  }
+
+  .molecule-details {
+    min-width: 0;
+  }
+
+  .molecule-title,
+  .molecule-subtitle {
+    display: block;
+  }
+
+  .molecule-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .molecule-title-link {
+    width: fit-content;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 0.2em;
+  }
+
+  .molecule-title-link:hover {
+    color: var(--accent);
+  }
+
+  .molecule-subtitle,
+  .source-link,
+  .source-label {
+    color: var(--muted-foreground);
+    font-size: 0.67rem;
+  }
+
+  .molecule-subtitle {
+    margin-top: 0.2rem;
+  }
+
+  .source-link,
+  .source-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .source-link {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 0.2em;
+  }
+
+  .source-link:hover {
+    color: var(--accent);
+  }
+
+  @keyframes loading-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (max-width: 39.999rem) {
+    .viewer-field {
+      height: auto;
+      min-height: 0;
+      aspect-ratio: var(--viewer-mobile-aspect-ratio);
+    }
+
+    .viewer-hint {
+      display: none;
+    }
+
+    .viewer-caption {
+      min-height: 0;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .source-link,
+    .source-label {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loading-dot {
+      animation: none;
+    }
+  }
+</style>

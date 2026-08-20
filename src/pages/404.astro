@@ -3,6 +3,8 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import LinkButton from "@/components/LinkButton.astro";
+import MoleculeViewer from "@/components/MoleculeViewer.astro";
+import lesinuradSdf from "@/assets/molecules/lesinurad.sdf?raw";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -16,20 +18,145 @@ const t = useTranslations(locale);
 
   <main
     id="main-content"
-    class="app-layout my-1 flex flex-1 items-center justify-center"
+    class="app-layout flex flex-1 items-center py-8 sm:py-12 lg:py-16"
   >
-    <div class="mb-14 flex flex-col items-center justify-center">
-      <h1 class="text-accent text-9xl font-bold">404</h1>
-      <span aria-hidden="true"> ¯\_(ツ)_/¯ </span>
-      <p class="mt-4 text-2xl sm:text-3xl">{t.notFound.message}</p>
-      <LinkButton
-        href={getRelativeLocaleUrl(locale, "")}
-        class="my-6 text-lg underline decoration-dashed underline-offset-8"
+    <section
+      class="error-showcase grid w-full items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(30rem,1.18fr)] lg:gap-14"
+      aria-labelledby="not-found-heading"
+    >
+      <div class="error-copy max-w-xl lg:py-8">
+        <div class="error-intro">
+          <h1
+            id="not-found-heading"
+            class="text-5xl leading-[0.95] font-semibold sm:text-6xl lg:text-7xl"
+          >
+            {t.notFound.heading}
+          </h1>
+        </div>
+
+        <div class="error-details">
+          <p
+            class="text-muted-foreground mt-6 max-w-lg text-lg leading-relaxed sm:text-xl"
+          >
+            {t.notFound.message}
+            {" "}
+            <strong class="text-foreground whitespace-nowrap">
+              {t.notFound.molecularWeight}
+            </strong>.
+          </p>
+
+          <dl
+            class="border-border mt-8 grid max-w-lg grid-cols-2 gap-x-6 gap-y-5 border-y py-5 font-mono text-sm"
+          >
+            <div>
+              <dt
+                class="text-muted-foreground text-xs tracking-wider uppercase"
+              >
+                Compound
+              </dt>
+              <dd class="mt-1 font-medium">{t.notFound.compoundName}</dd>
+            </div>
+            <div>
+              <dt
+                class="text-muted-foreground text-xs tracking-wider uppercase"
+              >
+                Formula
+              </dt>
+              <dd class="mt-1 font-medium">{t.notFound.formula}</dd>
+            </div>
+            <div class="col-span-2">
+              <dt
+                class="text-muted-foreground text-xs tracking-wider uppercase"
+              >
+                {t.notFound.molecularWeightLabel}
+              </dt>
+              <dd class="text-accent mt-1 text-lg font-semibold">
+                {t.notFound.molecularWeight}
+              </dd>
+            </div>
+          </dl>
+
+          <LinkButton
+            href={getRelativeLocaleUrl(locale, "")}
+            class="border-border bg-surface hover:border-accent mt-8 border px-5 py-3 font-mono text-sm font-semibold transition-colors"
+          >
+            <span aria-hidden="true">←</span>
+            {t.notFound.goHome}
+          </LinkButton>
+        </div>
+      </div>
+
+      <MoleculeViewer
+        sdf={lesinuradSdf}
+        ariaLabel={t.notFound.viewerLabel}
+        loadingLabel={t.notFound.viewerLoading}
+        errorLabel={t.notFound.viewerError}
+        interactionHint={t.notFound.viewerHint}
+        pauseLabel={t.notFound.viewerPause}
+        playLabel={t.notFound.viewerPlay}
+        resetLabel={t.notFound.viewerReset}
+        title={t.notFound.compoundName}
+        titleHref="https://en.wikipedia.org/wiki/Lesinurad"
+        subtitle={t.notFound.formula}
+        sourceLabel={t.notFound.viewerSource}
+        sourceHref="https://pubchem.ncbi.nlm.nih.gov/compound/53465279"
+        linkTarget="_blank"
+        autoRotate
+        rotationSpeed={12}
       >
-        {t.notFound.goHome}
-      </LinkButton>
-    </div>
+        <span slot="backdrop" class="error-number" aria-hidden="true">404</span>
+      </MoleculeViewer>
+    </section>
   </main>
 
   <Footer />
 </Layout>
+
+<style>
+  .error-showcase {
+    min-height: min(44rem, calc(100svh - 12rem));
+  }
+
+  .error-number {
+    position: absolute;
+    top: -0.11em;
+    left: 50%;
+    z-index: 0;
+    color: color-mix(in srgb, var(--foreground) 5%, transparent);
+    font-family: var(--font-google-sans-code);
+    font-size: clamp(9rem, 25vw, 15rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.12em;
+    transform: translateX(-53%);
+    user-select: none;
+  }
+
+  @media (max-width: 63.999rem) {
+    .error-showcase {
+      grid-template-areas:
+        "intro"
+        "viewer"
+        "details";
+      gap: 1.5rem;
+      min-height: auto;
+    }
+
+    .error-copy {
+      display: contents;
+    }
+
+    .error-intro {
+      grid-area: intro;
+    }
+
+    .error-details {
+      grid-area: details;
+    }
+
+    :global([data-molecule-viewer]) {
+      min-width: 0;
+      grid-area: viewer;
+    }
+  }
+</style>
