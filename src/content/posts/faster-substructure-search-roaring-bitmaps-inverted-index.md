@@ -110,8 +110,15 @@ The reference index implementation is in `benchmarks/query_index.py`.
 
 Lastly, I wanted to check whether a NumPy implementation could compete with roaring bitmaps. Codex/GPT-5.6-Sol helped me a lot with this. We ended up with a solution that stores the packed parts of the original 2,048-bit fingerprint in a set of 32 `uint64` values and uses a combination of clever bitwise operations and bit shifts to produce results even faster: **1.261 seconds**.
 
+The [Roaring format specification](https://github.com/RoaringBitmap/RoaringFormatSpec) describes two container types that are similar to the representation used here:
+
+- **Array containers** store a sorted list of 16-bit unsigned integers, using two bytes per value.
+- **Bitset containers** use 8 KB, stored as 64-bit words. If value *j* is present, bit *j* % 64 is set in word *j* / 64.
+
 Is it clever? Probably.
+
 Was it a NumPy learning experience for me? Definitely.
+
 Would I like to support this code? Probably not. The roaring bitmap version is much more intuitive and readable.
 
 ![Serial matching time for six substructure search methods over 1,000 reactants and 50,000 queries, from 76 seconds for the naive scan to 1.25 seconds for NumPy postings.](./roaring-substructure-assets/all_methods_50k.png)
