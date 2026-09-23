@@ -118,5 +118,5 @@ Would I like to support this code? Probably not. The roaring bitmap version is m
 ![NumPy and roaring postings matching and index build times for 50,000 and 200,000 queries; NumPy has lower matching times at both sizes.](./roaring-substructure-assets/postings_comparison.png)
 
 
-Looks like roaring can indeed help a lot. Can only image improvment we can e.g. get out of Postgres with the introduction of the inverted index backed by roaring bitmaps. 
+Looks like roaring can indeed help a lot. Can only imagine improvment we can e.g. get out of Postgres with the introduction of the inverted index backed by roaring bitmaps. 
 Hope you enyojed with spontaneous read.
