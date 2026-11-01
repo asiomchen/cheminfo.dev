@@ -19,8 +19,8 @@ description: Matching 1,000 molecules against 50,000 SMARTS queries, from a 77-s
 > It adds the Rust part, written together with my former colleague
 > [Marcin Kowiel](https://www.linkedin.com/in/marcin-kowiel-60baaa176/), who did most of
 > Rust-related work.
-> All numbers come from a single new benchmark run, so some differ slightly from the
-> first version.
+> All numbers come from a single new benchmark run (2026-10-11), so some differ slightly
+> from the first version.
 
 One of the most insightful talks at [RDKit UGM 2026](https://github.com/rdkit/UGM_2026)
 was [Maciej Wójcikowski](https://www.linkedin.com/in/mwojcikowski/)’s talk about using
@@ -51,8 +51,8 @@ starting molecule. Most of the approaches described here can also speed up the s
 the opposite direction.
 
 For the benchmark, I used the `uspto-grants` subset of
-[`ord-data`](https://github.com/open-reaction-database/ord-data): 1.77 million chemical
-reactions mined from United States patent grants.
+[`ord-data`](https://github.com/open-reaction-database/ord-data): 1.77 million
+chemical reactions mined from United States patent grants.
 These reactions are atom-mapped, so we can use AstraZeneca’s
 [`reaction-utils`](https://github.com/MolecularAI/reaction_utils) library to get
 reasonably good templates.
@@ -95,12 +95,12 @@ for r_mol in reactants:
             matches.append(...)
 ```
 
-**77.2 s** (76.3 s matching): 50 million full graph matches at about 1.5 µs each.
+**77.2 s** (76.3 s matching): 50 million substructure match calls at about 1.5 µs each.
 Probably fine for a one-time search, but it doesn’t scale with the template library.
 
 Before any algorithm work, removing plain Python overhead mattered.
-Iterating over a pandas `Series` in the inner loop costs 3.7× more than iterating over a
-list.
+Iterating over a pandas `Series` in the inner loop costs 3.7× as much as iterating over
+a list.
 
 ## Screen cheaply, then match exactly
 
@@ -179,13 +179,13 @@ The subset test is now cheap, and the scan itself is the cost.
 To complete the set of approaches from Maciej’s talk, I tried the Postgres cartridge
 (according to the RDKit survey, 20% of users use it, can you believe it?). The queries
 go into a column of the query-molecule (`qmol`) type with a GiST index, and the search
-runs one molecule at a time, from a container with one CPU and one connection.
+runs one molecule at a time, over a single connection and 1 CPU core limit.
 
 Searching the existing table takes **7.9 s**. Loading the table and building the index
 take another **8.3 s**, so comparing it with the end-to-end numbers above is not quite
 fair to either side.
-With **4 CPUs** and **10 connections** the search drops to about **1.6 s**, but that is
-multiprocessing, and everything here is single-threaded.
+With **10 connections** (and all 10 cores available) the search drops to about **1.6
+s**, but that is multiprocessing, and everything here is single-threaded.
 
 Why isn’t the index faster?
 The cartridge was designed for the other direction.
@@ -253,7 +253,7 @@ The “path fp” rows are explained in the next section.*
 
 ## A query-aware path fingerprint
 
-At this point matching takes about 1.3 s, and most of it is RDKit’s exact match on
+At this point matching takes about 1.3 s, and much of it is RDKit’s exact match on
 350,393 candidate pairs.
 To make the exact match run less often, the screen has to be more specific.
 
@@ -263,7 +263,7 @@ It ignores everything else the SMARTS states, including hydrogen counts, degree 
 charges. Reaction templates state a lot of those.
 In `[C&H2&D2&+0]` the fingerprint sees only “a carbon”.
 
-![Comparison for the aldehyde query on an aliphatic carbon: RDKit’s Pattern fingerprint reads only elements and bond orders, while the Rust fingerprint reads every stated label. Across the whole benchmark, Pattern sends 350,393 pairs to the exact match and the Rust fingerprint 82,461. For this query 585 reactants pass the Pattern screen, 26 pass the Rust screen and 14 really match.](./roaring-substructure-assets/pattern_vs_rust_query.png)
+![Comparison for the aldehyde query on an aliphatic carbon: RDKit’s Pattern fingerprint reads only elements and bond orders, while the Rust fingerprint reads every stated label. Across the whole benchmark, Pattern sends 350,393 pairs to the exact match and the tuned Rust fingerprint (paths4+branches, 2,048 bits) 82,461. For this query 585 reactants pass the Pattern screen, 26 pass the Rust screen and 14 really match.](./roaring-substructure-assets/pattern_vs_rust_query.png)
 
 This is a design choice in RDKit -
 [rdkit#151](https://github.com/rdkit/rdkit/issues/151) and
@@ -271,8 +271,6 @@ This is a design choice in RDKit -
 hard way: a pattern-fingerprint feature must be something a larger molecule can’t take
 away. Ring membership or the neighbour count of a query fragment can differ in the full
 molecule, so including them risks false negatives.
-The bit layout is also frozen, because people store these bits, for example in the
-PostgreSQL cartridge.
 
 Our fingerprint (`paths4`) keeps that guarantee and uses the query information more
 fully:
@@ -287,9 +285,9 @@ fully:
 With the same inverted index, the number of exact matches drops from 350k to about
 **90k**, 3.9× fewer.
 
-In Python, though, the new fingerprint makes the index **3× slower to build** (4.8 s →
-16.8 s). Matching gets a little faster (1.01 s), but end to end it is a loss, as the
-“path fp” rows above show.
+In Python, though, the new fingerprint makes the index **about 3.5× slower to build**
+(4.8 s → 16.8 s). Matching gets a little faster (1.01 s), but end to end it is a loss,
+as the “path fp” rows above show.
 Next stop: Rust.
 
 ## Take RDKit out of the hot loop
@@ -313,7 +311,8 @@ End to end the search goes from 6.81 s to **6.16 s** (1.06 s matching), only abo
 faster. Most of the time is still the 4.4 s index build, because Python asks RDKit for
 the `PatternFingerprint` of each of the 50,000 queries.
 And even inside the matching step, the screen was not where the time went.
-Timing the stages of the 1.06 s separately:
+Timing the stages separately (in an earlier, separate run of the same benchmark, about
+1.07 s in total):
 
 | stage | time | share |
 | --- | ---: | ---: |
@@ -353,15 +352,15 @@ It now covers elements, `#n`, `a`, `A` and `*`; isotopes (`[13C]`); H count, deg
 total connectivity (`X`), valence, charge and ranges such as `D{1-3}`; ring membership,
 ring size and ring bonds (`R`, `r`, `x`); heteroatom neighbours (`z`, `Z`); recursive
 SMARTS (`$(...)`); negation, conjunction and alternatives; and all the usual bond types,
-including ring bonds (`@`). 
+including ring bonds (`@`).
 
 As a sanity check we also ran [chematic](https://crates.io/crates/chematic-core), a
 general-purpose pure-Rust toolkit.
 Matching every pair takes 19.8 s end to end, about 4× faster than RDKit’s naive loop.
-Behind our screen it takes 0.84 s (0.157 s matching, about 3× slower than the custom
+Behind our screen it takes 0.84 s (0.157 s matching, about 2× slower than our 0.071 s
 matcher), and it returns exactly the same matches as RDKit.
 
-![Stacked end-to-end time, Python against Rust, one thread: NumPy inverted index + RDKit match 6.81 s, Rust inverted index + RDKit match 6.16 s, chematic match on every pair 19.84 s, Rust screen + chematic match 0.84 s, all in Rust with path fp 0.62 s, all in Rust with the best fp 0.68 s.](./roaring-substructure-assets/rust_total_time.png)
+![Stacked end-to-end time, Python against Rust, one thread: NumPy posting lists + RDKit match 6.81 s, Rust posting lists + RDKit match 6.16 s, chematic match on every pair 19.84 s, Rust screen + chematic match 0.84 s, all in Rust with path fp 0.62 s, all in Rust with the best fp (paths up to 4 bonds + branches, 2,048 bits) 0.59 s.](./roaring-substructure-assets/rust_total_time.png)
 
 *End-to-end time, Python against Rust.
 Once the whole pipeline is native, the full run from SMARTS strings to matches takes
@@ -381,8 +380,7 @@ It also fixes the problem that made the path fingerprint a loss in Python.
 
 - **Native parsing and fingerprinting:** our own SMARTS parser, with no RDKit `Mol` and
   no Python call per query.
-- **Cheaper hashing:** feature counting with a hash table and incremental path hashes
-  (0.70 → 0.45 s).
+- **Cheaper hashing:** feature counting with a hash table and incremental path hashes.
 - **Postings in one pass:** a single flat `u64` array, filled by walking each query’s
   set bits with `trailing_zeros`.
 
@@ -396,12 +394,11 @@ With a saved index, a search from loading the index to the final matches takes 0
 Rust against about 2 s in Python.
 The Rust index is a quarter of the size on disk and uses a third of the memory.*
 
-## Fine-tuning the matcher: 71 → 51 ms of matching
+## Fine-tuning the matcher: 115 → 50 ms of matching
 
 With the algorithm in place, the rest was profiling and tuning the matching step.
 This section is the exception to the end-to-end rule: the changes only affect matching
-time, which dropped from 71 to 51 ms.
-End to end the run stays at about 0.63 s, because the index build dominates.
+time. 
 Each change kept the result identical (same 27,723 matches, same digest):
 
 | change | effect |
@@ -410,7 +407,7 @@ Each change kept the result identical (same 27,723 matches, same digest):
 | feature counting with a hash table instead of a sort | fingerprint −40% |
 | tight root scan + one `Step` struct per search step | 282 → 223 ns per pair |
 | rare-root order: start the search at the rarest query atom | 223 → ~190 ns per pair |
-| incremental polynomial path hashing | fingerprint −33–40% |
+| incremental polynomial path hashing | fingerprint −30–50%, depending on the kind |
 | fingerprint sweep (50 configurations) | `paths4+branches`, 2,048 bits |
 
 The diagnostic flags drove most of this.
@@ -423,8 +420,8 @@ The fingerprint sweep tried 10 kinds of features at five sizes (matching time):
 ![Heatmaps of matching time and pairs sent to exact matching for 10 fingerprint kinds at 512 to 8,192 bits. The fastest configuration is paths of up to 4 bonds plus branches at 2,048 bits: 50 ms and 82 thousand pairs. Atom labels only needs 504 to 934 ms and about 3 million pairs.](./roaring-substructure-assets/fp_sweep.png)
 
 - **The kind of fingerprint matters most.** Atom labels alone send about 3 million pairs
-  to the exact match, and paths of up to 2 bonds about 250–390 thousand.
-  Paths of 4 bonds or more get it below 100 thousand.
+  to the exact match, and paths of up to 2 bonds about 240–390 thousand.
+  Paths of 4 bonds or more get it below 100 thousand at 2,048 bits and above.
   Counting repeated features matters too: `paths4` without counts sends 1.7× more pairs.
 - **Size has an optimum.** Larger fingerprints always send fewer pairs, but beyond 2,048
   bits the gain is small and comparing longer fingerprints costs more.
@@ -464,7 +461,7 @@ With more diverse, less specific queries, the gap would be smaller.
 
 ## Vibe matching: writing the Rust version was easier than expected
 
-Most of the Rust code here was written by Claude (Opus 5.5 at medium effort, in Claude
+Much of the Rust code here was written by Claude (Opus 5.5 at medium effort, in Claude
 Cowork), with Marcin guiding it: setting the tasks, reviewing the results and deciding
 what to measure next.
 
@@ -479,7 +476,9 @@ A simple prompt can be enough:
 write unit tests and merge when all test passes.
 ```
 
-So [letting models do the benchmarking](https://patwalters.github.io/Let-the-Agents-Do-the-Benchmarking/) can give you a very good head start with minimal manual effort.
+So
+[letting models do the benchmarking](https://patwalters.github.io/Let-the-Agents-Do-the-Benchmarking/)
+can give you a very good head start with minimal manual effort.
 
 Models do sometimes start from wrong assumptions about what is slow, so measure rather
 than trust. And is the result robust and production-ready?
