@@ -497,8 +497,8 @@ whether it had really finished or we were looking at the previous results.
 - **Measure, then tune.** Search statistics pointed at the root scan, while reusing
   buffers saved nothing.
 
-The right algorithm and data structure come first, then an efficient implementation on
-top of them.
+- **Optimize algorithms and data structures first.** Optimize the code later. Gains from better algorithm can surpass optimal implementation.
+
 And LLMs are great at well-constrained problems, especially when they have a
 comprehensive test set.
 
